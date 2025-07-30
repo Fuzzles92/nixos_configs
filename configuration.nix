@@ -56,17 +56,11 @@
   # Enable the X11 windowing system.
   services.xserver.enable = true;
 
-
-   # Enable XFCE Desktop Enviroment
-   #services.xserver.desktopManager.xfce.enable = true;
-   #services.displayManager.defaultSession = "xfce";
- 
-
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.excludePackages = with pkgs; [
-  		pkgs.xterm			# xTerm
+  	pkgs.xterm			# xTerm
   ];
   
   # Gnome Exclude Packages
@@ -113,6 +107,7 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
+  services.printing.drivers = [ pkgs.hplip ];
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -139,23 +134,11 @@
     description = "Fuzzles";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-	gnome-tweaks		# Additional Gnome Changes
-	wget			# World Wide Web Get
-	git			# Git
-	thunderbird		# Email Client
-	libreoffice		# Office Suite
-	discord			# Discord Client
-	spotify			# Spotify Client
-	pika-backup		# Data Backup
-	impression		# ISO Writer
-	#pkgs.ignition		# Start up Applications
-	pkgs.distrobox
-	pkgs.boxbuddy
-	pkgs.mission-center
+	#vim
     ];
   };
 
-  # Install Applciations
+  # Install Applications
   programs.firefox = {
   		enable = true;
   		};
@@ -177,7 +160,6 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-  	pkgs.ignition		# Start up Applications
 	# Gnome Extensions
 	gnomeExtensions.appindicator
 	gnomeExtensions.blur-my-shell
@@ -186,6 +168,16 @@
 	gnomeExtensions.gsconnect
 	gnomeExtensions.logo-menu
 	gnomeExtensions.search-light
+	
+	# Other Applications
+	#pkgs.mission-center	# System Monitor
+	gnome-tweaks		# Additional Gnome Changes
+	wget			# World Wide Web Get
+	git			# Git
+	thunderbird		# Email Client
+	libreoffice		# Office Suite
+	discord			# Discord Client
+	spotify			# Spotify Client
   # vim
   ];
 
