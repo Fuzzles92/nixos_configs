@@ -3,6 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 # Useful Commands
+#nixos-help
 #sudo nixos-rebuild switch # Rebuild and Switch
 #sudo nixos-rebuild switch --upgrade # Upgrade and Switch
 #sudo nix-collect-garbage --delete-old # Delete All But Current Image
@@ -18,8 +19,18 @@
   # Bootloader.
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/sda";
+  
+  # Automatic updates & system rebuild
+   system.autoUpgrade = {
+   		enable = true;
+		dates = "weekly";
+		operation = "boot";
+   		};
+  # Flatpak	
+  #services.flatpak.enable = true;
 
-  # System D
+  # Systemd
+  systemd.user.services.podman.enable = true;
   #boot.systemd-boot = {
 	#enable = true;
 	#configuationLimit = 2;
@@ -53,11 +64,15 @@
     LC_TIME = "en_GB.UTF-8";
   };
 
-  # Enable the X11 windowing system.
+  # Enable the X11 windowing 
   services.xserver.enable = true;
 
   # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm = {
+  			enable = true;
+  			autoLogin.enable = true;
+			autoLogin.user = "fuzzles";
+  			};
   services.xserver.desktopManager.gnome.enable = true;
   services.xserver.excludePackages = with pkgs; [
   	pkgs.xterm			# xTerm
@@ -107,7 +122,20 @@
 
   # Enable CUPS to print documents.
   services.printing.enable = true;
-  services.printing.drivers = [ pkgs.hplip ];
+  #services.printing.drivers = [ pkgs.hplip ];
+  services.printing.drivers = [ 
+	#pkgs.gutenprint # — Drivers for many different printers from many different vendors.
+	#pkgs.gutenprintBin # — Additional, binary-only drivers for some printers.
+	pkgs.hplip # — Drivers for HP printers.
+	#pkgs.hplipWithPlugin # — Drivers for HP printers, with the proprietary plugin.
+	#pkgs.postscript-lexmark # — Postscript drivers for Lexmark
+	#pkgs.samsung-unified-linux-driver # — Proprietary Samsung Drivers
+	#pkgs.splix # — Drivers for printers supporting SPL (Samsung Printer Language).
+	#pkgs.brlaser # — Drivers for some Brother printers
+	#pkgs.brgenml1lpr #  — Generic drivers for more Brother printers [1]
+	#pkgs.brgenml1cupswrapper  # — Generic drivers for more Brother printers [1]
+	#pkgs.cnijfilter2 # — Drivers for some Canon Pixma devices (Proprietary driver)
+	]; 
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -137,8 +165,11 @@
 	#vim
     ];
   };
+  
+  # Enable Podman
+  virtualisation.podman.enable = true;
 
-  # Install Applications
+  # Enable Applications
   programs.firefox = {
   		enable = true;
   		};
@@ -153,8 +184,9 @@
   		virtualisation.libvirtd.enable = true;
   		virtualisation.spiceUSBRedirection.enable = true;
   		users.groups.libvirtd.members = ["fuzzles"];
+
   
-  # Allow unfree packages
+  # Enable unfree packages
   nixpkgs.config.allowUnfree = true;
 
   # List packages installed in system profile. To search, run:
@@ -178,7 +210,11 @@
 	libreoffice		# Office Suite
 	discord			# Discord Client
 	spotify			# Spotify Client
-  # vim
+	teamviewer		# Remote Client
+	vscode			# Code Editor
+	podman			# Container Engine
+	distrobox		# Containers
+	boxbuddy		# GUI For Distrobox
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
