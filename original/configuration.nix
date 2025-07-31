@@ -12,10 +12,10 @@
 
   # Bootloader.
   boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/vda";
+  boot.loader.grub.device = "/dev/sda";
   boot.loader.grub.useOSProber = true;
 
-  networking.hostName = "groot"; # Define your hostname.
+  networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -49,42 +49,6 @@
   # Enable the GNOME Desktop Environment.
   services.xserver.displayManager.gdm.enable = true;
   services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.excludePackages = with pkgs; [
-  	pkgs.xterm			# xTerm
-  ];
-  
-  # Gnome Exclude Packages
-  environment.gnome.excludePackages = with pkgs.gnome; [
-	# Gnome Packages
-  	#pkgs.gnome-calculator		# Gnome Calculator
-	pkgs.gnome-calendar		# Gnome Calendar
-	pkgs.gnome-characters		# Gnome Characters
-	pkgs.gnome-clocks		# Gnome Clocks
-	pkgs.gnome-contacts		# Gnome Contacts
-	pkgs.gnome-font-viewer		# Gnome Font Viewer
-	pkgs.gnome-logs			# Gnome Logs
-	pkgs.gnome-maps			# Gnome Maps
-	pkgs.gnome-music		# Gnome Music
-	pkgs.gnome-photos		# Gnome Photos
-	#pkgs.gnome-system-monitor	# Gnome System Monitor
-	pkgs.gnome-weather		# Gnome Weather
-	#pkgs.gnome-disk-utility	# Gnome Disk Utility
-	pkgs.gnome-connections		# Gnome Connections
-	pkgs.gnome-tour			# Gnome Tour
-	#pkgs.gnome-text-editor		# Gnome Text Editor
-	pkgs.snapshot			# Gnome Camera
-	pkgs.decibels			# Gnome Music Player
-  	pkgs.totem			# Gnome Video Player
-  	pkgs.geary			# Gnome Email Client
-	pkgs.baobab			# Gnome Disk Usage Analyzer
-	pkgs.seahorse			# Gnome Password Manager
-	pkgs.epiphany			# Gnome Web Browser
-	pkgs.yelp			# Gnome Help Viewer
-	#pkgs.simple-scan		# Gnome Document Scanner
-	#pkgs.evince			# Gnome Docment Viewer
-	#pkgs.loupe			# Gnome Image Viewer
-	#pkgs.file-roller		# Gnome Archive Manager
-  ];
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -123,13 +87,7 @@
     description = "Fuzzles";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-	gnome-tweaks
-	git			# Git
-	thunderbird		# Email Client
-	libreoffice		# Office Suite
-	steam			# Steam Client
-	discord			# Discord Client
-	spotify			# Spotify Client
+    #  thunderbird
     ];
   };
 
@@ -142,19 +100,8 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment.systemPackages = with pkgs; [
-	# Gnome Extensions
-	gnomeExtensions.appindicator
-	gnomeExtensions.blur-my-shell
-	gnomeExtensions.dash-to-dock
-	gnomeExtensions.caffeine
-	gnomeExtensions.gsconnect
-	gnomeExtensions.logo-menu
-	gnomeExtensions.search-light
- # vim
- # wget
- # git
- # steam
- # discord
+  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
+  #  wget
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
