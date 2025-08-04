@@ -11,6 +11,7 @@
 #==========================================#
 #nixos-help
 #sudo nixos-rebuild switch # Rebuild and Switch
+#sudo nixos-rebuild boot # Rebuild and wait till reboot
 #sudo nixos-rebuild switch --upgrade # Upgrade and Switch
 #sudo nix-collect-garbage --delete-old # Delete All But Current Image
 
@@ -160,7 +161,6 @@ services.printing.drivers = [
 	#pkgs.cnijfilter2 # — Drivers for some Canon Pixma devices (Proprietary driver)
 	]; 
 
-
 #==========================================#
 #           Sound (Pipewire)               #
 #==========================================#
@@ -182,7 +182,6 @@ services.printing.drivers = [
 
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
-
 
 #==========================================#
 #               User Information           #
@@ -249,6 +248,8 @@ environment.systemPackages = with pkgs; [
 	distrobox		# Containers
 	boxbuddy		# GUI For Distrobox
 	ignition
+	vlc
+	pika-backup
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
