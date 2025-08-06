@@ -6,6 +6,12 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+#gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'
+#gsettings set org.gnome.desktop.interface cursor-size 24
+#gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
+#gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita'
+#gsettings set org.gnome.shell.extensions.user-theme name 'Adwaita'
+
 #==========================================#
 #           Nix Useful Commands            #
 #==========================================#
