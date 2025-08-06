@@ -1,10 +1,17 @@
+#==========================================#
+#          Family Nix Configuation         #
+#==========================================#
+
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-# Useful Commands
+#==========================================#
+#           Nix Useful Commands            #
+#==========================================#
 #nixos-help
 #sudo nixos-rebuild switch # Rebuild and Switch
+#sudo nixos-rebuild boot # Rebuild and wait till reboot
 #sudo nixos-rebuild switch --upgrade # Upgrade and Switch
 #sudo nix-collect-garbage --delete-old # Delete All But Current Image
 
@@ -15,28 +22,32 @@
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
+    
+#==========================================#
+#              Bootloader                  #
+#==========================================#
 
-  # Bootloader.
-  boot.loader.grub.enable = true;
-  boot.loader.grub.device = "/dev/sda";
+boot.loader.grub.enable = true;
+boot.loader.grub.device = "/dev/sda";
   
-  # Automatic updates & system rebuild
-   system.autoUpgrade = {
-   		enable = true;
-		dates = "weekly";
-		operation = "boot";
-   		};
-  # Flatpak	
-  #services.flatpak.enable = true;
+#==========================================#
+#      Automatic Updates & Rebuild         #
+#==========================================#
+system.autoUpgrade = {
+	enable = true;
+	dates = "weekly";
+	operation = "boot";
+	};
 
-  # Systemd
-  systemd.user.services.podman.enable = true;
-  #boot.systemd-boot = {
-	#enable = true;
-	#configuationLimit = 2;
-  #};
+#==========================================#
+#              Flatpaks                    #
+#==========================================#
+services.flatpak.enable = true;
 
-  networking.hostName = "thor"; # Define your hostname.
+#==========================================#
+#           System Information             #
+#==========================================#
+  networking.hostName = "groot"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -66,49 +77,16 @@
 
   # Enable the X11 windowing 
   services.xserver.enable = true;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm = {
-  			enable = true;
-  			autoLogin.enable = true;
-			autoLogin.user = "fuzzles";
-  			};
-  services.xserver.desktopManager.gnome.enable = true;
-  services.xserver.excludePackages = with pkgs; [
-  	pkgs.xterm			# xTerm
-  ];
   
-  # Gnome Exclude Packages
-  environment.gnome.excludePackages = with pkgs.gnome; [
-	# Gnome Packages
-  	#pkgs.gnome-calculator		# Gnome Calculator
-	pkgs.gnome-calendar		# Gnome Calendar
-	pkgs.gnome-characters		# Gnome Characters
-	pkgs.gnome-clocks		# Gnome Clocks
-	pkgs.gnome-contacts		# Gnome Contacts
-	pkgs.gnome-font-viewer		# Gnome Font Viewer
-	pkgs.gnome-logs			# Gnome Logs
-	pkgs.gnome-maps			# Gnome Maps
-	pkgs.gnome-music		# Gnome Music
-	pkgs.gnome-photos		# Gnome Photos
-	#pkgs.gnome-system-monitor	# Gnome System Monitor
-	pkgs.gnome-weather		# Gnome Weather
-	#pkgs.gnome-disk-utility	# Gnome Disk Utility
-	pkgs.gnome-connections		# Gnome Connections
-	pkgs.gnome-tour			# Gnome Tour
-	#pkgs.gnome-text-editor		# Gnome Text Editor
-	pkgs.snapshot			# Gnome Camera
-	pkgs.decibels			# Gnome Music Player
-  	pkgs.totem			# Gnome Video Player
-  	pkgs.geary			# Gnome Email Client
-	pkgs.baobab			# Gnome Disk Usage Analyzer
-	pkgs.seahorse			# Gnome Password Manager
-	pkgs.epiphany			# Gnome Web Browser
-	pkgs.yelp			# Gnome Help Viewer
-	#pkgs.simple-scan		# Gnome Document Scanner
-	#pkgs.evince			# Gnome Docment Viewer
-	#pkgs.loupe			# Gnome Image Viewer
-	#pkgs.file-roller		# Gnome Archive Manager
+#==========================================#
+#               Cinnamon DE                   #
+#==========================================#
+services.xserver.displayManager.lightdm = {
+		enable = true;
+		};
+services.xserver.desktopManager.cinnamon.enable = true;
+services.xserver.excludePackages = with pkgs; [
+  	pkgs.xterm		# xTerm
   ];
 
   # Configure keymap in X11
@@ -120,10 +98,11 @@
   # Configure console keymap
   console.keyMap = "uk";
 
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
-  #services.printing.drivers = [ pkgs.hplip ];
-  services.printing.drivers = [ 
+#==========================================#
+#         Printing (CUPS & Drivers)        #
+#==========================================#
+services.printing.enable = true;
+services.printing.drivers = [ 
 	#pkgs.gutenprint # — Drivers for many different printers from many different vendors.
 	#pkgs.gutenprintBin # — Additional, binary-only drivers for some printers.
 	pkgs.hplip # — Drivers for HP printers.
@@ -137,6 +116,9 @@
 	#pkgs.cnijfilter2 # — Drivers for some Canon Pixma devices (Proprietary driver)
 	]; 
 
+#==========================================#
+#           Sound (Pipewire)               #
+#==========================================#
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
   security.rtkit.enable = true;
@@ -156,65 +138,42 @@
   # Enable touchpad support (enabled default in most desktopManager).
   # services.xserver.libinput.enable = true;
 
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  users.users.fuzzles = {
+#==========================================#
+#               User Information           #
+#==========================================#
+# Define a user account. Don't forget to set a password with ‘passwd’.
+users.users.fuzzles = {
     isNormalUser = true;
     description = "Fuzzles";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
 	#vim
     ];
-  };
-  
-  # Enable Podman
-  virtualisation.podman.enable = true;
+};
 
-  # Enable Applications
-  programs.firefox = {
-  		enable = true;
-  		};
-  programs.steam = {
-  		enable = true;
-  		remotePlay.openFirewall = true;
-  		dedicatedServer.openFirewall = true;
-  		localNetworkGameTransfers.openFirewall = true;
-  		};
-  		
-  programs.virt-manager.enable = true;
-  		virtualisation.libvirtd.enable = true;
-  		virtualisation.spiceUSBRedirection.enable = true;
-  		users.groups.libvirtd.members = ["fuzzles"];
+#==========================================#
+#           Enable Applications            #
+#==========================================#
+programs.firefox = {
+	enable = true;
+	};
+ 
+#==========================================#
+#           Enable Unfree Packages         #
+#==========================================#
+nixpkgs.config.allowUnfree = true;
 
-  
-  # Enable unfree packages
-  nixpkgs.config.allowUnfree = true;
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-	# Gnome Extensions
-	gnomeExtensions.appindicator
-	gnomeExtensions.blur-my-shell
-	gnomeExtensions.dash-to-dock
-	gnomeExtensions.caffeine
-	gnomeExtensions.gsconnect
-	gnomeExtensions.logo-menu
-	gnomeExtensions.search-light
-	
+#==========================================#
+#           Sysem Packages                 #
+#==========================================#
+environment.systemPackages = with pkgs; [
 	# Other Applications
-	#pkgs.mission-center	# System Monitor
-	gnome-tweaks		# Additional Gnome Changes
 	wget			# World Wide Web Get
 	git			# Git
-	thunderbird		# Email Client
 	libreoffice		# Office Suite
-	discord			# Discord Client
-	spotify			# Spotify Client
 	teamviewer		# Remote Client
-	vscode			# Code Editor
-	podman			# Container Engine
-	distrobox		# Containers
-	boxbuddy		# GUI For Distrobox
+	vlc			# Media & Video Player
+	pika-backup		# Backup Software
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
