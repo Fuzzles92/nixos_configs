@@ -45,8 +45,8 @@ clear
 #            GNOME Config                  #
 #==========================================#
 gnome_config() {
-    echo -e $pink_start"==== GNOME Desktop Environment ===="$pink_finish
-    read -p "Do you want to apply the GNOME Desktop Environment Config? (y/n): " confirm_update
+    echo -e "${pink_start}==== GNOME Config ====${pink_finish}"
+    read -p "Do you want to apply the GNOME config? (y/n): " confirm_update
 
     if [[ "$confirm_update" =~ ^[Yy]$ ]]; then
         echo ""
@@ -57,6 +57,114 @@ gnome_config() {
         timestamp="$(date +%Y%m%d-%H%M%S)"
         backup_path="/home/${current_user}/${timestamp}_configuration.nix"
         new_config="./nix_configurations/gnome_configuration.nix"
+
+        if cp /etc/nixos/configuration.nix "$backup_path"; then
+            echo -e "${green_start}✔ Backup Successful: $backup_path${green_finish}"
+        else
+            echo -e "${red_start}✖ Backup Failed. Check Permissions or Path.${red_finish}"
+            return 1
+        fi
+
+        if cp "$new_config" /etc/nixos/configuration.nix; then
+            echo ""
+            echo -e "${green_start}✔ GNOME Configuration Applied!${green_finish}"
+        else
+            echo -e "${red_start}✖ Failed to apply GNOME Configuration.${red_finish}"
+            return 1
+        fi
+
+        echo ""
+        echo -e "${green_start}✔ GNOME Config Setup Complete.${green_finish}"
+        echo ""
+
+        # 🔧 Ask to rebuild the system
+        read -p "⚙️  Do you want to rebuild the system now? (y/n): " confirm_rebuild
+        if [[ "$confirm_rebuild" =~ ^[Yy]$ ]]; then
+            echo ""
+            echo "🔧 Running nixos-rebuild boot..."
+            if nixos-rebuild boot; then
+                echo ""
+                echo -e "${green_start}✔ System Rebuild Successful.${green_finish}"
+                
+                # 🔄 Ask to reboot after successful rebuild
+                echo ""
+                read -p "🔄 Do you want to reboot now? (y/n): " confirm_reboot
+                if [[ "$confirm_reboot" =~ ^[Yy]$ ]]; then
+                    echo ""
+                    echo "🔁 Rebooting system..."
+                    reboot
+                else
+                    echo -e "${yellow_start}⏭ Skipping reboot.${yellow_finish}"
+                fi
+            else
+                echo -e "${red_start}✖ System Rebuild Failed. Please check the error log.${red_finish}"
+                return 1
+            fi
+        else
+            echo ""
+            echo -e "${yellow_start}⏭ Skipping system rebuild.${yellow_finish}"
+        fi
+
+    else
+        echo ""
+        echo -e "${yellow_start}⏭ Skipping GNOME Config install...${yellow_finish}"
+    fi
+}
+
+#########################################
+# gnome_config() {
+#     echo -e $pink_start"==== GNOME Config ===="$pink_finish
+#     read -p "Do you want to apply the GNOME config? (y/n): " confirm_update
+
+#     if [[ "$confirm_update" =~ ^[Yy]$ ]]; then
+#         echo ""
+#         echo "📦 Backing up original config file..."
+#         echo ""
+
+#         current_user="${SUDO_USER:-$USER}"
+#         timestamp="$(date +%Y%m%d-%H%M%S)"
+#         backup_path="/home/${current_user}/${timestamp}_configuration.nix"
+#         new_config="./nix_configurations/gnome_configuration.nix"
+
+#         if cp /etc/nixos/configuration.nix "$backup_path"; then
+#             echo -e "${green_start}✔ Backup Successful: $backup_path${green_finish}"
+#         else
+#             echo -e "${red_start}✖ Backup Failed. Check Permissions or Path.${red_finish}"
+#             return 1
+#         fi
+
+#         if cp "$new_config" /etc/nixos/configuration.nix; then
+#             echo ""
+#             echo -e "${green_start}✔ GNOME Configuration Applied!${green_finish}"
+#         else
+#             echo -e "${red_start}✖ Failed to apply GNOME Configuration.${red_finish}"
+#             return 1
+#         fi
+
+#         echo ""
+#         echo -e "${green_start}✔ GNOME Config Setup Complete.${green_finish}"
+#     else
+#         echo ""
+#         echo -e "${yellow_start}⏭ Skipping GNOME Config install...${yellow_finish}"
+#     fi
+# }
+
+#==========================================#
+#          GNOME Dev Mode Config           #
+#==========================================#
+gnome_dev_config() {
+    echo -e $pink_start"==== GNOME Config Dev Mode ===="$pink_finish
+    read -p "Do you want to apply the GNOME Config (Dev)? (y/n): " confirm_update
+
+    if [[ "$confirm_update" =~ ^[Yy]$ ]]; then
+        echo ""
+        echo "📦 Backing up original config file..."
+        echo ""
+
+        current_user="${SUDO_USER:-$USER}"
+        timestamp="$(date +%Y%m%d-%H%M%S)"
+        backup_path="/home/${current_user}/${timestamp}_configuration.nix"
+        new_config="./nix_configurations/gnome_dev_configuration.nix"
 
         if cp /etc/nixos/configuration.nix "$backup_path"; then
             echo -e "${green_start}✔ Backup Successful: $backup_path${green_finish}"
@@ -129,19 +237,21 @@ update_system() {
 config_menu() {
     while true; do
         echo -e "${yellow_start}-- Configuration Selection Menu --${yellow_finish}"
-        echo -e "1) GNOME Desktop Environment ${red_start}(Drax)${red_finish}"
-        echo -e "2) Cinnamon Desktop Environment ${green_start}(Groot)${green_finish}"
-        echo -e "3) Qtile Window Manager ${blue_start}(StarLord)${blue_finish}"
-        echo "4) Back to Main Menu"
+        echo -e "1) GNOME Config"
+        echo -e "2) GNOME Config ${red_start}(Dev)${red_finish}"
+        echo -e "3) Cinnamon Config"
+        echo -e "4) Qtile Config  ${red_start}(Dev)${red_finish}"
+        echo "5) Back to Main Menu"
         echo
-        read -p "Choose your desktop config [1-4]: " config_choice
+        read -p "Choose your NixOS config [1-5]: " config_choice
         echo
 
         case $config_choice in
             1) gnome_config ;;
-            2) cinnamon_config ;;
-            3) qtile_config ;;
-            4) break ;;
+            2) gnome_dev_config ;;
+            3) cinnamon_config ;;
+            4) qtile_config ;;
+            5) break ;;
             *) echo -e "${red_start}Invalid choice. Try again.${red_finish}" ;;
         esac
         echo
