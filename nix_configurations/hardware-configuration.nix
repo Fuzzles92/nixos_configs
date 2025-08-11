@@ -10,18 +10,25 @@
 
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usb_storage" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ ];
-  boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelModules = [ ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/f4f1d3d5-aadb-4c16-9be8-d9e8d9b81f10";
+    { device = "/dev/disk/by-uuid/3f6e7b81-c62a-49e4-b0f5-3dd58e8e4954";
       fsType = "ext4";
     };
-  
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/003E-DF5F";
+      fsType = "vfat";
+      options = [ "fmask=0077" "dmask=0077" ];
+    };
+    
   # 1TB SSD
   fileSystems."/mnt/1TB_SSD" =
     { device = "/dev/disk/by-uuid/8be4eccc-776e-4086-a2bd-1b28dcba77de";
       fsType = "ext4";
+      options = [ "noauto" ];
     };
 
   swapDevices = [ ];
