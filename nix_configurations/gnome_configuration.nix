@@ -6,6 +6,10 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+#==========================================#
+#           GNOME gSettings                #
+#==========================================#
+
 #gsettings set org.gnome.desktop.interface cursor-theme 'Adwaita'
 #gsettings set org.gnome.desktop.interface cursor-size 24
 #gsettings set org.gnome.desktop.interface icon-theme 'Adwaita'
@@ -32,7 +36,6 @@
 #==========================================#
 #              Bootloader                  #
 #==========================================#
-
 boot.loader.grub.enable = true;
 boot.loader.grub.device = "/dev/sda";
   
@@ -44,20 +47,6 @@ system.autoUpgrade = {
 	dates = "weekly";
 	operation = "boot";
 	};
-
-#==========================================#
-#              Flatpaks                    #
-#==========================================#
-services.flatpak.enable = true;
-
-#==========================================#
-#               Systemd                    #
-#==========================================#
-systemd.user.services.podman.enable = true;
-  #boot.systemd-boot = {
-	#enable = true;
-	#configuationLimit = 2;
-  #};
 
 #==========================================#
 #           System Information             #
@@ -90,8 +79,8 @@ systemd.user.services.podman.enable = true;
     LC_TIME = "en_GB.UTF-8";
   };
 
-  # Enable the X11 windowing 
-  services.xserver.enable = true;
+# Enable the X11 windowing 
+services.xserver.enable = true;
   
 #==========================================#
 #               GNOME DE                   #
@@ -110,7 +99,6 @@ services.xserver.excludePackages = with pkgs; [
 #             GNOME Excludes               #
 #==========================================#
 environment.gnome.excludePackages = with pkgs.gnome; [
-	#pkgs.gnome-calculator		# Gnome Calculator
 	pkgs.gnome-calendar		# Gnome Calendar
 	pkgs.gnome-characters		# Gnome Characters
 	pkgs.gnome-clocks		# Gnome Clocks
@@ -120,12 +108,9 @@ environment.gnome.excludePackages = with pkgs.gnome; [
 	pkgs.gnome-maps			# Gnome Maps
 	pkgs.gnome-music		# Gnome Music
 	pkgs.gnome-photos		# Gnome Photos
-	#pkgs.gnome-system-monitor	# Gnome System Monitor
 	pkgs.gnome-weather		# Gnome Weather
-	#pkgs.gnome-disk-utility	# Gnome Disk Utility
 	pkgs.gnome-connections		# Gnome Connections
 	pkgs.gnome-tour			# Gnome Tour
-	#pkgs.gnome-text-editor		# Gnome Text Editor
 	pkgs.snapshot			# Gnome Camera
 	pkgs.decibels			# Gnome Music Player
 	pkgs.totem			# Gnome Video Player
@@ -134,10 +119,6 @@ environment.gnome.excludePackages = with pkgs.gnome; [
 	pkgs.seahorse			# Gnome Password Manager
 	pkgs.epiphany			# Gnome Web Browser
 	pkgs.yelp			# Gnome Help Viewer
-	#pkgs.simple-scan		# Gnome Document Scanner
-	#pkgs.evince			# Gnome Docment Viewer
-	#pkgs.loupe			# Gnome Image Viewer
-	#pkgs.file-roller		# Gnome Archive Manager
   ];
 
   # Configure keymap in X11
@@ -202,27 +183,13 @@ users.users.fuzzles = {
     ];
 };
 
-# Enable Podman
-virtualisation.podman.enable = true;
-
 #==========================================#
 #           Enable Applications            #
 #==========================================#
 programs.firefox = {
 	enable = true;
 	};
-programs.steam = {
-	enable = true;
-	remotePlay.openFirewall = true;
-	dedicatedServer.openFirewall = true;
-	localNetworkGameTransfers.openFirewall = true;
-	};
-programs.virt-manager.enable = true;
-	virtualisation.libvirtd.enable = true;
-	virtualisation.spiceUSBRedirection.enable = true;
-	users.groups.libvirtd.members = ["fuzzles"];
-
-  
+ 
 #==========================================#
 #           Enable Unfree Packages         #
 #==========================================#
@@ -244,18 +211,10 @@ environment.systemPackages = with pkgs; [
 	gnome-tweaks		# Additional Gnome Changes
 	wget			# World Wide Web Get
 	git			# Git
-	thunderbird		# Email Client
 	libreoffice		# Office Suite
-	discord			# Discord Client
-	spotify			# Spotify Client
-	teamviewer		# Remote Client
-	vscode			# Code Editor
-	podman			# Container Engine
-	distrobox		# Containers
-	boxbuddy		# GUI For Distrobox
-	ignition
-	vlc
-	pika-backup
+	ignition		# Start up Applications
+	vlc			# Media & Video Player
+	pika-backup		# Backup Application
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -266,7 +225,11 @@ environment.systemPackages = with pkgs; [
   #   enableSSHSupport = true;
   # };
 
-  # List services that you want to enable:
+#==========================================#
+#           Enable Services                #
+#==========================================#
+services.teamviewer.enable = true;     # Teamviewer
+services.flatpak.enable = true;        # Flatpak
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
