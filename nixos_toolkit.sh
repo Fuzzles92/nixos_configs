@@ -3,11 +3,12 @@
 # === Details ===
 # Created by: Fuzzles92
 # Created: Aug 08 2025
-# Version: 0.3
+# Version: 0.4
 
 # === To Do ===
 # Add New Cinnamon script
 # Add New Qtile script
+# Create backup folder for backup process
 
 #==========================================#
 #              Colours                     #
