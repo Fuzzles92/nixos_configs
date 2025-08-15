@@ -14,21 +14,21 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
-    { device = "/dev/disk/by-uuid/3f6e7b81-c62a-49e4-b0f5-3dd58e8e4954";
+    { device = "/dev/disk/by-uuid/470c4e8a-39e5-4b22-844d-deaeeb731f89";
       fsType = "ext4";
     };
 
   fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/003E-DF5F";
+    { device = "/dev/disk/by-uuid/4D37-E946";
       fsType = "vfat";
       options = [ "fmask=0077" "dmask=0077" ];
     };
     
-  # 1TB SSD
+   # 1TB SSD
   fileSystems."/mnt/1TB_SSD" =
     { device = "/dev/disk/by-uuid/8be4eccc-776e-4086-a2bd-1b28dcba77de";
       fsType = "ext4";
-      options = [ "noauto" ];
+      #options = [ "noauto" ];
     };
 
   swapDevices = [ ];

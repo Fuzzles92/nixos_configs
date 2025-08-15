@@ -1,5 +1,5 @@
 #==========================================#
-#           Nix Configuation               #
+#           My Nix Configuation            #
 #==========================================#
 
 # Edit this configuration file to define what should be installed on
@@ -27,27 +27,22 @@
 
 { config, pkgs, ... }:
 
+#==========================================#
+#                Imports                   #
+#==========================================#
 {
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./lanzaboote.nix
     ];
-    
+
 #==========================================#
 #              Bootloader                  #
 #==========================================#
+boot.loader.systemd-boot.enable = true;
+boot.loader.efi.canTouchEfiVariables = true;
 
-#---Systemd-Boot---#
-#boot.loader.systemd-boot.enable = true;
-#boot.loader.efi.canTouchEfiVariables = true;
-
-#---Grub---#
-boot.loader.grub.enable = true;
-boot.loader.grub.device = "/dev/sda";
-#boot.loader.grub.device = "nodev";
-#boot.loader.grub.efiSupport = true;
-
-  
 #==========================================#
 #      Automatic Updates & Rebuild         #
 #==========================================#
@@ -61,63 +56,48 @@ system.autoUpgrade = {
 #               Systemd                    #
 #==========================================#
 systemd.user.services.podman.enable = true;
-  #boot.systemd-boot = {
-	#enable = true;
-	#configuationLimit = 2;
-  #};
 
 #==========================================#
 #           System Information             #
 #==========================================#
-  networking.hostName = "thor"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+networking.hostName = "Thor"; # Define your hostname.
+networking.networkmanager.enable = true;
+time.timeZone = "Europe/London";
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+# Select internationalisation properties.
+i18n.defaultLocale = "en_GB.UTF-8";
 
-  # Enable networking
-  networking.networkmanager.enable = true;
+i18n.extraLocaleSettings = {
+  LC_ADDRESS = "en_GB.UTF-8";
+  LC_IDENTIFICATION = "en_GB.UTF-8";
+  LC_MEASUREMENT = "en_GB.UTF-8";
+  LC_MONETARY = "en_GB.UTF-8";
+  LC_NAME = "en_GB.UTF-8";
+  LC_NUMERIC = "en_GB.UTF-8";
+  LC_PAPER = "en_GB.UTF-8";
+  LC_TELEPHONE = "en_GB.UTF-8";
+  LC_TIME = "en_GB.UTF-8";
+};
 
-  # Set your time zone.
-  time.timeZone = "Europe/London";
+  # Enable the X11 windowing system.
+  # You can disable this if you're only using the Wayland session.
+  services.xserver.enable = true;
 
-  # Select internationalisation properties.
-  i18n.defaultLocale = "en_GB.UTF-8";
-
-  i18n.extraLocaleSettings = {
-    LC_ADDRESS = "en_GB.UTF-8";
-    LC_IDENTIFICATION = "en_GB.UTF-8";
-    LC_MEASUREMENT = "en_GB.UTF-8";
-    LC_MONETARY = "en_GB.UTF-8";
-    LC_NAME = "en_GB.UTF-8";
-    LC_NUMERIC = "en_GB.UTF-8";
-    LC_PAPER = "en_GB.UTF-8";
-    LC_TELEPHONE = "en_GB.UTF-8";
-    LC_TIME = "en_GB.UTF-8";
-  };
-
-# Enable the X11 windowing 
-services.xserver.enable = true;
-  
 #==========================================#
 #               GNOME DE                   #
 #==========================================#
 services.xserver.displayManager.gdm = {
 		enable = true;
-		autoLogin.enable = true;
-		autoLogin.user = "fuzzles";
 		};
 services.xserver.desktopManager.gnome.enable = true;
 services.xserver.excludePackages = with pkgs; [
   	pkgs.xterm		# xTerm
   ];
-
+  
 #==========================================#
 #             GNOME Excludes               #
 #==========================================#
 environment.gnome.excludePackages = with pkgs.gnome; [
-	#pkgs.gnome-calculator		# Gnome Calculator
 	pkgs.gnome-calendar		# Gnome Calendar
 	pkgs.gnome-characters		# Gnome Characters
 	pkgs.gnome-clocks		# Gnome Clocks
@@ -127,12 +107,9 @@ environment.gnome.excludePackages = with pkgs.gnome; [
 	pkgs.gnome-maps			# Gnome Maps
 	pkgs.gnome-music		# Gnome Music
 	pkgs.gnome-photos		# Gnome Photos
-	#pkgs.gnome-system-monitor	# Gnome System Monitor
 	pkgs.gnome-weather		# Gnome Weather
-	#pkgs.gnome-disk-utility	# Gnome Disk Utility
 	pkgs.gnome-connections		# Gnome Connections
 	pkgs.gnome-tour			# Gnome Tour
-	#pkgs.gnome-text-editor		# Gnome Text Editor
 	pkgs.snapshot			# Gnome Camera
 	pkgs.decibels			# Gnome Music Player
 	pkgs.totem			# Gnome Video Player
@@ -141,10 +118,14 @@ environment.gnome.excludePackages = with pkgs.gnome; [
 	pkgs.seahorse			# Gnome Password Manager
 	pkgs.epiphany			# Gnome Web Browser
 	pkgs.yelp			# Gnome Help Viewer
+	#pkgs.gnome-system-monitor	# Gnome System Monitor
+	#pkgs.gnome-disk-utility	# Gnome Disk Utility
+	#pkgs.gnome-text-editor		# Gnome Text Editor
 	#pkgs.simple-scan		# Gnome Document Scanner
 	#pkgs.evince			# Gnome Docment Viewer
 	#pkgs.loupe			# Gnome Image Viewer
 	#pkgs.file-roller		# Gnome Archive Manager
+	#pkgs.gnome-calculator		# Gnome Calculator
   ];
 
   # Configure keymap in X11
@@ -173,7 +154,7 @@ services.printing.drivers = [
 	#pkgs.brgenml1cupswrapper  # — Generic drivers for more Brother printers [1]
 	#pkgs.cnijfilter2 # — Drivers for some Canon Pixma devices (Proprietary driver)
 	]; 
-
+	
 #==========================================#
 #           Sound (Pipewire)               #
 #==========================================#
@@ -205,14 +186,22 @@ users.users.fuzzles = {
     description = "Fuzzles";
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [
-	#vim
+	gnome-tweaks		# Additional Gnome Changes
+	wget			# World Wide Web Get
+	git			# Git
+	thunderbird		# Email Client
+	libreoffice		# Office Suite
+	discord			# Discord Client
+	spotify			# Spotify Client
+	vscode			# Code Editor
+	podman			# Container Engine
+	distrobox		# Containers
+	boxbuddy		# GUI For Distrobox
+	ignition		# Start up Applications
+	vlc			# Media & Video Player
+	pika-backup		# Backup Application
     ];
-};
-
-#==========================================#
-#           Enable Podman                  #
-#==========================================#
-virtualisation.podman.enable = true;
+  };
 
 #==========================================#
 #           Enable Applications            #
@@ -230,11 +219,11 @@ programs.virt-manager.enable = true;
 	virtualisation.libvirtd.enable = true;
 	virtualisation.spiceUSBRedirection.enable = true;
 	users.groups.libvirtd.members = ["fuzzles"];
-  
+
 #==========================================#
 #           Enable Unfree Packages         #
 #==========================================#
-nixpkgs.config.allowUnfree = true;
+  nixpkgs.config.allowUnfree = true;
 
 #==========================================#
 #           Sysem Packages                 #
@@ -248,21 +237,9 @@ environment.systemPackages = with pkgs; [
 	gnomeExtensions.gsconnect
 	gnomeExtensions.logo-menu
 	gnomeExtensions.search-light
-	# Other Applications
-	gnome-tweaks		# Additional Gnome Changes
-	wget			# World Wide Web Get
-	git			    # Git
-	thunderbird		# Email Client
-	libreoffice		# Office Suite
-	discord			# Discord Client
-	spotify			# Spotify Client
-	vscode			# Code Editor
-	podman			# Container Engine
-	distrobox		# Containers
-	boxbuddy		# GUI For Distrobox
-	ignition		# Start up Applications
-	vlc				# Media & Video Player
-	pika-backup		# Backup Application
+	# Other Packages
+	sbctl			# Secure Boot Key Manager
+	niv			# Easy Dependency Management for Nix Projects
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -287,13 +264,16 @@ services.flatpak.enable = true;        # Flatpak
   # networking.firewall.allowedUDPPorts = [ ... ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
-
-  # This value determines the NixOS release from which the default
-  # settings for stateful data, like file locations and database versions
-  # on your system were taken. It‘s perfectly fine and recommended to leave
-  # this value at the release version of the first install of this system.
-  # Before changing this value read the documentation for this option
-  # (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
-  system.stateVersion = "25.05"; # Did you read the comment?
+  
+#==========================================#
+#           State Version                  #
+#==========================================#
+# This value determines the NixOS release from which the default
+# settings for stateful data, like file locations and database versions
+# on your system were taken. It‘s perfectly fine and recommended to leave
+# this value at the release version of the first install of this system.
+# Before changing this value read the documentation for this option
+# (e.g. man configuration.nix or on https://nixos.org/nixos/options.html).
+system.stateVersion = "25.05"; # Did you read the comment?
 
 }

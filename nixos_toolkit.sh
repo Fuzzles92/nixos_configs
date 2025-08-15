@@ -3,7 +3,7 @@
 # === Details ===
 # Created by: Fuzzles92
 # Created: Aug 08 2025
-# Version: 0.4
+# Version: 0.5
 
 # === To Do ===
 # Add New Cinnamon script
@@ -56,7 +56,8 @@ gnome_config() {
 
         current_user="${SUDO_USER:-$USER}"
         timestamp="$(date +%Y%m%d-%H%M%S)"
-        backup_path="/home/${current_user}/${timestamp}_configuration.nix"
+        #backup_path="/home/${current_user}/${timestamp}_configuration.nix"
+        backup_path="/home/${current_user}/config_backups/${timestamp}_configuration.nix"
         new_config="./nix_configurations/gnome_configuration.nix"
 
         if cp /etc/nixos/configuration.nix "$backup_path"; then
@@ -111,44 +112,6 @@ gnome_config() {
         echo -e "${yellow_start}⏭ Skipping GNOME Config install...${yellow_finish}"
     fi
 }
-
-#########################################
-# gnome_config() {
-#     echo -e $pink_start"==== GNOME Config ===="$pink_finish
-#     read -p "Do you want to apply the GNOME config? (y/n): " confirm_update
-
-#     if [[ "$confirm_update" =~ ^[Yy]$ ]]; then
-#         echo ""
-#         echo "📦 Backing up original config file..."
-#         echo ""
-
-#         current_user="${SUDO_USER:-$USER}"
-#         timestamp="$(date +%Y%m%d-%H%M%S)"
-#         backup_path="/home/${current_user}/${timestamp}_configuration.nix"
-#         new_config="./nix_configurations/gnome_configuration.nix"
-
-#         if cp /etc/nixos/configuration.nix "$backup_path"; then
-#             echo -e "${green_start}✔ Backup Successful: $backup_path${green_finish}"
-#         else
-#             echo -e "${red_start}✖ Backup Failed. Check Permissions or Path.${red_finish}"
-#             return 1
-#         fi
-
-#         if cp "$new_config" /etc/nixos/configuration.nix; then
-#             echo ""
-#             echo -e "${green_start}✔ GNOME Configuration Applied!${green_finish}"
-#         else
-#             echo -e "${red_start}✖ Failed to apply GNOME Configuration.${red_finish}"
-#             return 1
-#         fi
-
-#         echo ""
-#         echo -e "${green_start}✔ GNOME Config Setup Complete.${green_finish}"
-#     else
-#         echo ""
-#         echo -e "${yellow_start}⏭ Skipping GNOME Config install...${yellow_finish}"
-#     fi
-# }
 
 #==========================================#
 #          GNOME Dev Mode Config           #
@@ -239,9 +202,9 @@ config_menu() {
     while true; do
         echo -e "${yellow_start}-- Configuration Selection Menu --${yellow_finish}"
         echo -e "1) GNOME Config"
-        echo -e "2) GNOME Config ${red_start}(Dev)${red_finish}"
+        echo -e "2) GNOME Config ${red_start}(Developer)${red_finish}"
         echo -e "3) Cinnamon Config"
-        echo -e "4) Qtile Config  ${red_start}(Dev)${red_finish}"
+        echo -e "4) Qtile Config  ${red_start}(Developer)${red_finish}"
         echo "5) Back to Main Menu"
         echo
         read -p "Choose your NixOS config [1-5]: " config_choice
@@ -264,7 +227,7 @@ config_menu() {
 #==========================================#
 while true; do
     echo -e "${pink_start}==== NixOS Toolkit Main Menu ====${pink_finish}"
-    echo "1) Change Desktop Environment Configuration"
+    echo "1) Change Configuration File"
     echo -e "2) Rebuild NixOS ${pink_start}(nixos-rebuild switch)${pink_finish}"
     echo -e "3) Update System ${pink_start}(nix-channel --update)${pink_finish}"
     echo "4) Exit"
